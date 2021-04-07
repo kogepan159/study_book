@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'record.dart';
@@ -17,7 +19,9 @@ enum TabItem {
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    checkPermission();
+    if (Platform.isAndroid) {
+      checkPermission();
+    }
     return MaterialApp(home: Scaffold(body: Container(child: ChangeForm())));
   }
 
