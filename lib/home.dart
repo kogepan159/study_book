@@ -18,13 +18,12 @@ class HomePage extends StatelessWidget {
     if (Platform.isAndroid) {
       checkPermission();
     }
-    return MaterialApp(
-        home: Scaffold(
+    return
+      Scaffold(
             body: Container(
                 child: ChangeForm()
             ),
-        )
-    );
+        );
   }
 
   Future<Map<Permission, PermissionStatus>> checkPermission() async {

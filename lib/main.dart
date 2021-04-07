@@ -64,9 +64,4 @@ class _MainPageState extends State<_ChangeForm> {
     );
   }
 
-  void setSelectedPage(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 }
