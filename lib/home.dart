@@ -8,21 +8,23 @@ import 'package:permission_handler/permission_handler.dart';
 import 'util.dart';
 import 'config.dart';
 import 'text.dart';
-
-enum TabItem {
-  home,
-  text,
-  report,
-  record
-}
+import 'main.dart';
 
 class HomePage extends StatelessWidget {
+  int _selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     if (Platform.isAndroid) {
       checkPermission();
     }
-    return MaterialApp(home: Scaffold(body: Container(child: ChangeForm())));
+    return MaterialApp(
+        home: Scaffold(
+            body: Container(
+                child: ChangeForm()
+            ),
+        )
+    );
   }
 
   Future<Map<Permission, PermissionStatus>> checkPermission() async {
@@ -44,16 +46,18 @@ class ChangeForm extends StatefulWidget {
 }
 
 class _HomePageDetail extends State<ChangeForm> {
-  //TabItem _currentTab = TabItem.home;
-  /*Map<TabItem, GlobalKey<NavigatorState>> _navigatorKeys = {
-    TabItem.home: GlobalKey<NavigatorState>(),
-    TabItem.text: GlobalKey<NavigatorState>(),
-    TabItem.report: GlobalKey<NavigatorState>(),
-    TabItem.record: GlobalKey<NavigatorState>()
-  };*/
   double _iconSize = 20.0;
   double _elementSpace = 20.0;
   double _titleSize = 18.0;
+
+  int _selectedIndex = 0;
+
+  /*static List<Widget> _pageList = [
+
+    CustomPage(pannelColor: Colors.grey, title: 'テキスト'),
+    CustomPage(pannelColor: Colors.grey, title: 'レポート'),
+    CustomPage(pannelColor: Colors.grey, title: '記録')
+  ];*/
 
   @override
   Widget build(BuildContext context) {
