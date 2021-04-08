@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:study_book/main.dart';
 import 'home.dart';
 import 'util.dart';
 
@@ -162,7 +163,8 @@ class _ConfigPageDetail extends State<ChangeForm> {
   void cancel() {
     //キャンセルボタンを押した時の遷移処理
     Navigator.pop(context);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp()));
+    //Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
   }
 
   void signOut() {
