@@ -2,16 +2,15 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'record.dart';
 import 'report.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'util.dart';
 import 'config.dart';
 import 'text.dart';
 import 'main.dart';
 
 class HomePage extends StatelessWidget {
-  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +47,7 @@ class _HomePageDetail extends State<ChangeForm> {
   double _iconSize = 20.0;
   double _elementSpace = 20.0;
   double _titleSize = 18.0;
-
-  int _selectedIndex = 0;
+  MainPageState mainPageState = new MainPageState();
 
   /*static List<Widget> _pageList = [
 
@@ -230,16 +228,31 @@ class _HomePageDetail extends State<ChangeForm> {
   void moveTextList() {
     //テキストのサムネイル画像下の「すべて表示」をタップした時にテキストの一覧を表示する
     debugPrint('run moveTextList()');
-    Navigator.push(context, MaterialPageRoute(builder: (context) => TextPage()));
+
+    selectedIndex = 1;
+    mainPageState.updateState();
+
+    print('selectedIndex = $selectedIndex');
+    //Navigator.push(context, MaterialPageRoute(builder: (context) => TextPage()));
   }
 
   void moveReportList() {
     debugPrint('run moveReportList()');
-    Navigator.push(context, MaterialPageRoute(builder: (context) => ReportPage()));
+
+    selectedIndex = 2;
+    mainPageState.updateState();
+
+    print('selectedIndex = $selectedIndex');
+    //Navigator.push(context, MaterialPageRoute(builder: (context) => ReportPage()));
   }
 
   void moveRecordList() {
     debugPrint('run moveRecordList()');
-    Navigator.push(context, MaterialPageRoute(builder: (context) => RecordPage()));
+
+    selectedIndex = 3;
+    mainPageState.updateState();
+
+    print('selectedIndex = $selectedIndex');
+    //Navigator.push(context, MaterialPageRoute(builder: (context) => RecordPage()));
   }
 }

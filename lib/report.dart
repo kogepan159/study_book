@@ -58,7 +58,7 @@ class Report {
 class ReportPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: Scaffold(body: Container(child: ChangeForm())));
+    return Scaffold(body: Container(child: ChangeForm()));
   }
 }
 

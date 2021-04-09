@@ -42,7 +42,7 @@ class Record {
 class RecordPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: Scaffold(body: ChangeForm()));
+    return Scaffold(body: ChangeForm());
   }
 }
 

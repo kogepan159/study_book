@@ -4,6 +4,9 @@ import 'text.dart';
 import 'report.dart';
 import 'home.dart';
 
+int selectedIndex = 0;
+bool isUpdateState = false;
+
 void main() {
   runApp(MyApp());
 }
@@ -17,30 +20,39 @@ class MyApp extends StatelessWidget {
 
 class _ChangeForm extends StatefulWidget {
   @override
-  _MainPageState createState() {
-    return _MainPageState();
+  MainPageState createState() {
+    return MainPageState();
   }
 }
 
-class _MainPageState extends State<_ChangeForm> {
+class MainPageState extends State<_ChangeForm> {
   static List<Widget> _pageList = [
     HomePage(),
     TextPage(),
     ReportPage(),
     RecordPage()
   ];
-  int _selectedIndex = 0;
+
+  /* home.dartの特定のフラグを監視してフラグが立ったらsetStateをはしらせる */
+  void updateState() {
+    /*if(isUpdateState) {
+      setState(() {});
+      isUpdateState = false;
+    }*/
+    setState(() {});
+  }
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      selectedIndex = index;
     });
+    print('selectedIndex = $selectedIndex');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pageList[_selectedIndex],
+      body: _pageList[selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -56,7 +68,7 @@ class _MainPageState extends State<_ChangeForm> {
               icon: ImageIcon(AssetImage('images/icon/icon_record.png')),
               label: '記録')
         ],
-        currentIndex: _selectedIndex,
+        currentIndex: selectedIndex,
         onTap: _onItemTapped,
         backgroundColor: Colors.white,
         type: BottomNavigationBarType.fixed,

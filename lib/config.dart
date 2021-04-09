@@ -6,10 +6,10 @@ import 'util.dart';
 class ConfigPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: Scaffold(
+    return Scaffold(
         body: Container(
             child: ChangeForm()),
-        backgroundColor: Colors.black54));
+        backgroundColor: Colors.black54);
   }
 }
 
@@ -163,8 +163,6 @@ class _ConfigPageDetail extends State<ChangeForm> {
   void cancel() {
     //キャンセルボタンを押した時の遷移処理
     Navigator.pop(context);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp()));
-    //Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
   }
 
   void signOut() {
