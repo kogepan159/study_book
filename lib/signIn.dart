@@ -5,7 +5,7 @@ import 'util.dart';
 class SignInPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: Scaffold(body: _ChangeForm()));
+    return Scaffold(body: _ChangeForm());
   }
 }
 
@@ -73,7 +73,6 @@ class _SignInPageDetail extends State<_ChangeForm> {
   void _signIn() {
     // ログイン成功でトップ画面に遷移
     Navigator.pop(context);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
     //Navigator.push(context, MaterialPageRoute(builder: (context) => BottomBar()));
   }
 
