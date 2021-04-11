@@ -11,19 +11,18 @@ import 'text.dart';
 import 'main.dart';
 
 class HomePage extends StatelessWidget {
+  HomePage(MainPageState this.mainPageState);
+  double _iconSize = 20.0;
+  double _elementSpace = 20.0;
+  double _titleSize = 18.0;
+  final MainPageState mainPageState;
 
-  @override
-  Widget build(BuildContext context) {
-    if (Platform.isAndroid) {
-      checkPermission();
-    }
-    return
-      Scaffold(
-            body: Container(
-                child: ChangeForm()
-            ),
-        );
-  }
+  /*static List<Widget> _pageList = [
+
+    CustomPage(pannelColor: Colors.grey, title: 'テキスト'),
+    CustomPage(pannelColor: Colors.grey, title: 'レポート'),
+    CustomPage(pannelColor: Colors.grey, title: '記録')
+  ];*/
 
   Future<Map<Permission, PermissionStatus>> checkPermission() async {
     Map<Permission, PermissionStatus> statuses = await [
@@ -34,31 +33,14 @@ class HomePage extends StatelessWidget {
     print('photos permission: ' + statuses[Permission.photos].toString());
     return statuses;
   }
-}
-
-class ChangeForm extends StatefulWidget {
-  @override
-  _HomePageDetail createState() {
-    return _HomePageDetail();
-  }
-}
-
-class _HomePageDetail extends State<ChangeForm> {
-  double _iconSize = 20.0;
-  double _elementSpace = 20.0;
-  double _titleSize = 18.0;
-  MainPageState mainPageState = new MainPageState();
-
-  /*static List<Widget> _pageList = [
-
-    CustomPage(pannelColor: Colors.grey, title: 'テキスト'),
-    CustomPage(pannelColor: Colors.grey, title: 'レポート'),
-    CustomPage(pannelColor: Colors.grey, title: '記録')
-  ];*/
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    if (Platform.isAndroid) {
+      checkPermission();
+    }
+    return Scaffold(
+        body: Container(
         padding: EdgeInsets.only(left: 20.0, top: 50.0, right: 20.0),
         child: Column(children: <Widget>[
           /* テキスト */
@@ -79,7 +61,11 @@ class _HomePageDetail extends State<ChangeForm> {
                   ]),
               IconButton(
                   icon: ImageIcon(AssetImage('images/icon/icon_config.png'), size: _iconSize),
-                  onPressed: moveConfig)
+                  onPressed: () {
+                    // 設定画面に遷移する
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ConfigPage()));
+                  }
+              )
             ],
           ),
 
@@ -204,13 +190,9 @@ class _HomePageDetail extends State<ChangeForm> {
               child: Text('すべて表示'),
             )
           ]),
-        ]));
+        ])));
   }
 
-  void moveConfig() {
-    // 設定画面に遷移する
-    Navigator.push(context, MaterialPageRoute(builder: (context) => ConfigPage()));
-  }
 
   void tapText(/*index*/) {
     //テキストのサムネイルがタップされたら該当のテキストの詳細を開く
@@ -228,31 +210,18 @@ class _HomePageDetail extends State<ChangeForm> {
   void moveTextList() {
     //テキストのサムネイル画像下の「すべて表示」をタップした時にテキストの一覧を表示する
     debugPrint('run moveTextList()');
-
-    selectedIndex = 1;
-    mainPageState.updateState();
-
-    print('selectedIndex = $selectedIndex');
-    //Navigator.push(context, MaterialPageRoute(builder: (context) => TextPage()));
+    mainPageState.onItemTapped(1);
   }
 
   void moveReportList() {
     debugPrint('run moveReportList()');
+    mainPageState.onItemTapped(2);
 
-    selectedIndex = 2;
-    mainPageState.updateState();
-
-    print('selectedIndex = $selectedIndex');
-    //Navigator.push(context, MaterialPageRoute(builder: (context) => ReportPage()));
   }
 
   void moveRecordList() {
     debugPrint('run moveRecordList()');
-
-    selectedIndex = 3;
-    mainPageState.updateState();
-
-    print('selectedIndex = $selectedIndex');
-    //Navigator.push(context, MaterialPageRoute(builder: (context) => RecordPage()));
+    mainPageState.onItemTapped(3);
   }
+
 }
