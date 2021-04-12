@@ -192,7 +192,7 @@ class _TextPageDetail extends State<ChangeForm> {
   }
 
   List<Book> loadBooks(int booksCount) {
-    List<Book> _books = new List();
+    List<Book> _books = [];
     Book book;
     debugPrint('loadBooks');
     for(int x = 0; x < booksCount; x++) {
@@ -206,7 +206,7 @@ class _TextPageDetail extends State<ChangeForm> {
   List<Column> getBookShelves() {
     int pageCount = _booksCount ~/ 9;
     pageCount += _booksCount % 9 == 0 ? 0 : 1;
-    List<Column> bookShelfs = new List();
+    List<Column> bookShelfs = [];
     Column onePageBookShelf;
     for(int x = 0; x < pageCount; x++) {
       onePageBookShelf = Column(
@@ -230,7 +230,7 @@ class _TextPageDetail extends State<ChangeForm> {
       lineCount += pageInBooksCount % 3 == 0 ? 0 : 1;
     }
 
-    List<Stack> oneLineBookShelfs = new List();
+    List<Stack> oneLineBookShelfs = [];
     Stack oneLineBookShelf;
     for(int x = 0; x < lineCount; x++) {
       oneLineBookShelf = Stack(
@@ -252,7 +252,7 @@ class _TextPageDetail extends State<ChangeForm> {
 
   /* 1行分の本棚を生成する */
   Row getOneLineBooks(int lineNumber) { // lineNumber >= 1
-    List<Stack> bookStacks = new List();
+    List<Stack> bookStacks = [];
     int startBookNumber = lineNumber * 3 - 2;
 
     // 基本的に本を3つ生成し、残りの本の数が3に満たない時は残りの数だけ生成する

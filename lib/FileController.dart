@@ -3,7 +3,7 @@ import 'dart:io';
 
 class FileController {
   static Future get localPath async {
-    final directory = await getExternalStorageDirectory();
+    final directory = await getApplicationDocumentsDirectory();
     return directory.path;
   }
 
@@ -27,7 +27,7 @@ class FileController {
 
   static Future printResourcesPath() async {
     final path = await localPath;
-    List<String> imagesPath = new List<String>();
+    List<String> imagesPath = [];
     final directory = await Directory('$path/StudyBook/');
     print(directory.path.toString());
 
@@ -38,6 +38,5 @@ class FileController {
 
     return imagesPath;
   }
-
 
 }

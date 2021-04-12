@@ -1,12 +1,5 @@
 import 'package:flutter/material.dart';
 
-enum TabItem {
-  home,
-  text,
-  report,
-  log
-}
-
 class SpaceBox extends SizedBox {
   SpaceBox({double width = 8, double height = 8})
       : super(width: width, height: height);

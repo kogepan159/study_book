@@ -56,7 +56,7 @@ class ChangeForm extends StatefulWidget {
 class _RecordPageDetail extends State<ChangeForm> {
   File _image;
   final picker = ImagePicker();
-  List<Record> records = new List();
+  List<Record> records = [];
   List<String> recordThumbnailsPath;
   String localPath;
   bool isFirstReload = true;
@@ -162,8 +162,12 @@ class _RecordPageDetail extends State<ChangeForm> {
       return;
     }
 
-    var savedFile = await FileController.saveLocalImage(_image, DateTime.now().toString() + '.png');
-
+    String fileName = DateTime.now().toString();
+    fileName = fileName.replaceAll(' ', '_');
+    fileName = fileName.replaceAll(':', '_');
+    fileName = fileName.replaceAll('.', '_');
+    var savedFile = await FileController.saveLocalImage(_image, fileName + '.png');
+    print('saved Picture -> ' + savedFile.toString());
     setState(() {
       _image = savedFile;
     });
@@ -180,11 +184,31 @@ class _RecordPageDetail extends State<ChangeForm> {
 
   Future getVideoFromCamera() async {
     PickedFile pickedFile = await picker.getVideo(source: ImageSource.camera);
-    var _cameraVideo = File(pickedFile.path);
-    var _cameraVideoPlayerController = VideoPlayerController.file(_cameraVideo);
+    var imageFile = File(pickedFile.path);
+    var _cameraVideoPlayerController = VideoPlayerController.file(imageFile);
 
+
+    _image = File(imageFile.path);
+
+    if(imageFile == null) {
+      return;
+    }
+
+    String fileName = DateTime.now().toString();
+    fileName = fileName.replaceAll(' ', '_');
+    fileName = fileName.replaceAll(':', '_');
+    fileName = fileName.replaceAll('.', '_');
+    var savedFile;
+    if(Platform.isAndroid) {
+      savedFile = await FileController.saveLocalImage(
+          _image, fileName + '.mp4');
+    } else {
+      savedFile = await FileController.saveLocalImage(_image, fileName + '.mov');
+    }
+
+    print('saved Picture -> ' + savedFile.toString());
     setState(() {
-      debugPrint(pickedFile.path);
+      _image = savedFile;
     });
   }
 
@@ -200,7 +224,7 @@ class _RecordPageDetail extends State<ChangeForm> {
   // すべての記録を表示する
   List<Row> getRecordLines() {
     //１行に4つ記録を表示する
-    List<Row> recordLines = new List();
+    List<Row> recordLines = [];
     int lineCount = records.length ~/ 4;
     lineCount += records.length % 4 == 0 ? 0 : 1;
 
@@ -214,15 +238,21 @@ class _RecordPageDetail extends State<ChangeForm> {
 
   /* 1行分の記録を返す */
   List<Expanded> getOneLineRecords(int lineNumber) {
-    List<Expanded> oneLineRecords = new List();
+    List<Expanded> oneLineRecords = [];
     int lineCount = records.length ~/ 4;
     lineCount += records.length % 4 == 0 ? 0 : 1;
     int contentCount = lineCount == lineNumber + 1 ? records.length % 4 : 4; // 1行に含まれる記録の数
     int recordNumber;
     for(int i = 0; i < contentCount; i++) {
       recordNumber = lineNumber * 4 + i;
+      print('$recordNumber');
       oneLineRecords.add(
-          Expanded(child: Image.file(File(records[recordNumber].getImagePath()), fit: BoxFit.contain))
+          Expanded(
+            child: GestureDetector(
+              child: Image.file(File(records[recordNumber].getImagePath()), fit: BoxFit.contain),
+              onTap: () => onImageTapped(recordNumber),
+            )
+          )
       );
     }
     if(lineCount == lineNumber + 1) {
@@ -237,7 +267,7 @@ class _RecordPageDetail extends State<ChangeForm> {
   }
 
   List<Record> loadRecords() {
-    List<Record> _records = new List();
+    List<Record> _records = [];
     Record _record;
 
     for(int i = 0; i < 83; i++) {
@@ -256,7 +286,7 @@ class _RecordPageDetail extends State<ChangeForm> {
 
   Future printFilePaths() async {
     FileController.printResourcesPath().then((value) {
-      recordThumbnailsPath = new List();
+      recordThumbnailsPath = [];
       print('length = ' + value.length.toString());
       for(int a = 0; a < value.length; a++) {
         print('*** ' + value[a]);
@@ -280,6 +310,10 @@ class _RecordPageDetail extends State<ChangeForm> {
     if(isUpdated) {
       setState(() {});
     }
+  }
+
+  void onImageTapped(int recordNumber) {
+    print('onImageTapped($recordNumber)');
   }
 
 }

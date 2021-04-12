@@ -3,11 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'record.dart';
-import 'report.dart';
 import 'util.dart';
 import 'config.dart';
-import 'text.dart';
 import 'main.dart';
 
 class HomePage extends StatelessWidget {
@@ -16,13 +13,6 @@ class HomePage extends StatelessWidget {
   double _elementSpace = 20.0;
   double _titleSize = 18.0;
   final MainPageState mainPageState;
-
-  /*static List<Widget> _pageList = [
-
-    CustomPage(pannelColor: Colors.grey, title: 'テキスト'),
-    CustomPage(pannelColor: Colors.grey, title: 'レポート'),
-    CustomPage(pannelColor: Colors.grey, title: '記録')
-  ];*/
 
   Future<Map<Permission, PermissionStatus>> checkPermission() async {
     Map<Permission, PermissionStatus> statuses = await [
