@@ -25,10 +25,10 @@ class FileController {
     return File(imagePath);
   }
 
-  static Future printResourcesPath() async {
+  static Future readResourcesPath() async {
     final path = await localPath;
     List<String> imagesPath = [];
-    final directory = await Directory('$path/StudyBook/');
+    final directory = Directory('$path/StudyBook/');
     print(directory.path.toString());
 
     await for (var entity in

@@ -7,18 +7,13 @@ import 'FileController.dart';
 
 import 'MoviePlayerWidget.dart';
 
-enum ContentType {
-  Picture,
-  Video
-}
-
 class Record {
   String _imagePath;
-  ContentType _contentType;
+  //ContentType _contentType;
 
   Record() {
     _imagePath = '';
-    _contentType = ContentType.Picture;
+    //_contentType = ContentType.Picture;
   }
 
   String getImagePath() {
@@ -29,13 +24,13 @@ class Record {
     _imagePath = imagePath;
   }
 
-  ContentType getContentType() {
+  /*ContentType getContentType() {
     return _contentType;
   }
 
   void setContentType(ContentType contentType) {
     _contentType = contentType;
-  }
+  }*/
 
 }
 
@@ -73,7 +68,7 @@ class _RecordPageDetail extends State<ChangeForm> {
       records = loadRecords();
       isFirstReload = false;
     }
-    printFilePaths();
+    print('records Count = ' + records.length.toString());
     return Container(
         padding:
         EdgeInsets.only(left: 20.0, top: 40.0, right: 20.0, bottom: 80.0),
@@ -82,7 +77,6 @@ class _RecordPageDetail extends State<ChangeForm> {
             IconButton(
                 icon: ImageIcon(AssetImage('images/icon/icon_camera.png'), size: 35.0),
                 onPressed: startingCamera),
-            //Text('検索バー'),
             Container(
                 width: MediaQuery.of(context).size.width / 2,
                 height: 80.0,
@@ -108,8 +102,6 @@ class _RecordPageDetail extends State<ChangeForm> {
 
   void startingCamera() {
     debugPrint('run startingCamera()');
-    //selectCaptureMode();
-    //getVideoFromCamera();
     showDialog(
         context: context,
         builder: (context) {
@@ -170,6 +162,7 @@ class _RecordPageDetail extends State<ChangeForm> {
     print('saved Picture -> ' + savedFile.toString());
     setState(() {
       _image = savedFile;
+      records = loadRecords();
     });
   }
 
@@ -186,7 +179,6 @@ class _RecordPageDetail extends State<ChangeForm> {
     PickedFile pickedFile = await picker.getVideo(source: ImageSource.camera);
     var imageFile = File(pickedFile.path);
     var _cameraVideoPlayerController = VideoPlayerController.file(imageFile);
-
 
     _image = File(imageFile.path);
 
@@ -209,6 +201,7 @@ class _RecordPageDetail extends State<ChangeForm> {
     print('saved Picture -> ' + savedFile.toString());
     setState(() {
       _image = savedFile;
+      records = loadRecords();
     });
   }
 
@@ -265,51 +258,26 @@ class _RecordPageDetail extends State<ChangeForm> {
 
     return oneLineRecords;
   }
-
+  //List<Record> loadRecords()
   List<Record> loadRecords() {
     List<Record> _records = [];
-    Record _record;
 
-    for(int i = 0; i < 83; i++) {
-      _record = new Record();
-      _record.setImagePath('images/content/record/record.png');
-      _record.setContentType(ContentType.Picture);
-      if(i == 2) {
-        _record.setImagePath('images/content/record/record.mp4');
-        _record.setContentType(ContentType.Video);
+    bool _isRecordLoaded = false;
+
+    FileController.readResourcesPath().then((value) {
+      int recordCount = value.length;
+      Record _record = new Record();
+      for(int i = 0; i < recordCount; i++) {
+        print('_record path: ' + value[i].toString());
+        _record.setImagePath(value[i]);
+        _records.add(_record);
       }
-      _records.add(_record);
-    }
+      setState(() {
+        print('recordCount: $recordCount');
+      });
+    });
 
     return _records;
-  }
-
-  Future printFilePaths() async {
-    FileController.printResourcesPath().then((value) {
-      recordThumbnailsPath = [];
-      print('length = ' + value.length.toString());
-      for(int a = 0; a < value.length; a++) {
-        print('*** ' + value[a]);
-        recordThumbnailsPath.add(value[a]);
-      }
-      updateRecordImages();
-    });
-  }
-
-  Future updateRecordImages() async {
-    bool isUpdated = false;
-    for(int i = 0; i < recordThumbnailsPath.length; i++) {
-      if(records[i].getImagePath() != recordThumbnailsPath[i]) {
-        print('不一致！ ' + records[i].getImagePath());
-        print(recordThumbnailsPath[i]);
-        records[i].setImagePath(recordThumbnailsPath[i]);
-        isUpdated = true;
-        print(records[i].getImagePath());
-      }
-    }
-    if(isUpdated) {
-      setState(() {});
-    }
   }
 
   void onImageTapped(int recordNumber) {
