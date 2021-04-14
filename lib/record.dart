@@ -9,11 +9,9 @@ import 'MoviePlayerWidget.dart';
 
 class Record {
   String _imagePath;
-  //ContentType _contentType;
 
   Record() {
     _imagePath = '';
-    //_contentType = ContentType.Picture;
   }
 
   String getImagePath() {
@@ -23,14 +21,6 @@ class Record {
   void setImagePath(String imagePath) {
     _imagePath = imagePath;
   }
-
-  /*ContentType getContentType() {
-    return _contentType;
-  }
-
-  void setContentType(ContentType contentType) {
-    _contentType = contentType;
-  }*/
 
 }
 
@@ -235,15 +225,12 @@ class _RecordPageDetail extends State<ChangeForm> {
     int lineCount = records.length ~/ 4;
     lineCount += records.length % 4 == 0 ? 0 : 1;
     int contentCount = lineCount == lineNumber + 1 ? records.length % 4 : 4; // 1行に含まれる記録の数
-    int recordNumber;
     for(int i = 0; i < contentCount; i++) {
-      recordNumber = lineNumber * 4 + i;
-      print('$recordNumber');
       oneLineRecords.add(
           Expanded(
             child: GestureDetector(
-              child: Image.file(File(records[recordNumber].getImagePath()), fit: BoxFit.contain),
-              onTap: () => onImageTapped(recordNumber),
+              child: Image.file(File(records[lineNumber * 4 + i].getImagePath()), fit: BoxFit.contain),
+              onTap: () => onImageTapped(lineNumber*4 + i),
             )
           )
       );
@@ -258,30 +245,75 @@ class _RecordPageDetail extends State<ChangeForm> {
 
     return oneLineRecords;
   }
-  //List<Record> loadRecords()
+
   List<Record> loadRecords() {
     List<Record> _records = [];
 
-    bool _isRecordLoaded = false;
-
     FileController.readResourcesPath().then((value) {
       int recordCount = value.length;
-      Record _record = new Record();
+
       for(int i = 0; i < recordCount; i++) {
-        print('_record path: ' + value[i].toString());
-        _record.setImagePath(value[i]);
+        Record _record = new Record();
+        print('value[$i] path: ' + value[i].toString());
+        //TODO: 画像ならそのままパスを入れて動画ならサムネイルを生成して入れる
+        _record.setImagePath(value[i].toString());
+        print('_record path: ' + _record.getImagePath());
         _records.add(_record);
       }
       setState(() {
         print('recordCount: $recordCount');
       });
-    });
 
+    });
     return _records;
   }
 
   void onImageTapped(int recordNumber) {
     print('onImageTapped($recordNumber)');
+    print('records[$recordNumber] path: ${records[recordNumber].getImagePath()}');
+
+
+
+    //TODO: 写真/動画サムネイルをクリックした時の詳細ページを生成して遷移する
+    Navigator.push(context, MaterialPageRoute(builder: (context) => RecordDetail(imagePath: records[recordNumber].getImagePath()))).then((value) => {
+      print('received Message => $value')
+    });
   }
 
+}
+
+class RecordDetail extends StatelessWidget {
+  final String imagePath;
+
+  RecordDetail({Key key, @required this.imagePath}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        padding: EdgeInsets.only(top: 50.0),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                IconButton( //戻るボタン
+                  icon: ImageIcon(AssetImage('images/icon/icon_arrow.png'), size: 40.0),
+                  onPressed: () => Navigator.pop(context))
+            ]),
+            Image.file(File(imagePath)), //Record詳細（動画の場合は動画）,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                IconButton( //Record削除ボタン
+                  icon: ImageIcon(AssetImage('images/icon/icon_remove.png'), size: 40.0),
+                  onPressed: () => Navigator.pop(context, "remove Message")
+                )
+              ]
+            )
+          ]
+        )
+      )
+    );
+  }
 }
