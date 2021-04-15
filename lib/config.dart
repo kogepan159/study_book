@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:study_book/main.dart';
-import 'home.dart';
 import 'util.dart';
 
 class ConfigPage extends StatelessWidget {

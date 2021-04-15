@@ -1,11 +1,28 @@
+import 'dart:async';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flappy_search_bar/flappy_search_bar.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:study_book/util.dart';
 import 'package:video_player/video_player.dart';
 import 'FileController.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 import 'MoviePlayerWidget.dart';
+
+Future getThumbnail(String videoPath) async {
+  Uint8List bytes;
+  final Completer<ThumbnailResult> completer = Completer();
+  bytes = await VideoThumbnail.thumbnailData(video: videoPath);
+  return bytes;
+  final _image = Image.memory(bytes);
+  print(_image);
+  completer.complete(ThumbnailResult(image: _image));
+
+  return completer.future;
+}
 
 class Record {
   String _imagePath;
@@ -22,6 +39,11 @@ class Record {
     _imagePath = imagePath;
   }
 
+}
+
+class ThumbnailResult {
+  final Image image;
+  const ThumbnailResult({this.image});
 }
 
 class RecordPage extends StatelessWidget {
@@ -45,6 +67,7 @@ class _RecordPageDetail extends State<ChangeForm> {
   List<String> recordThumbnailsPath;
   String localPath;
   bool isFirstReload = true;
+  FileUtility fileUtility = new FileUtility();
 
   @override
   Widget build(BuildContext context) {
@@ -226,14 +249,32 @@ class _RecordPageDetail extends State<ChangeForm> {
     lineCount += records.length % 4 == 0 ? 0 : 1;
     int contentCount = lineCount == lineNumber + 1 ? records.length % 4 : 4; // 1行に含まれる記録の数
     for(int i = 0; i < contentCount; i++) {
-      oneLineRecords.add(
+      // TODO: 画像ならImage.fileで参照、動画ならサムネイルを生成してImage.memoryで参照
+      FileType fileType = fileUtility.getFileType(records[lineNumber * 4 + i].getImagePath());
+      String imagePath = records[lineNumber * 4 + i].getImagePath();
+      if(fileType == FileType.Image) {
+        oneLineRecords.add(
           Expanded(
             child: GestureDetector(
-              child: Image.file(File(records[lineNumber * 4 + i].getImagePath()), fit: BoxFit.contain),
-              onTap: () => onImageTapped(lineNumber*4 + i),
+              child: Image.file(File(imagePath),
+              fit: BoxFit.contain),
+              onTap: () => onImageTapped(lineNumber * 4 + i),
             )
           )
-      );
+        );
+      } else if(fileType == FileType.Movie) {
+        Uint8List bytes;
+        // Image.memoryに格納するImageのバイト列を取得する
+        getThumbnail(imagePath).then((value) => () {
+          bytes = value;
+        });
+        oneLineRecords.add(
+          Expanded(
+            child: Image.memory(bytes),
+          )
+        );
+        setState(() {});
+      }
     }
     if(lineCount == lineNumber + 1) {
       for(int j = 0; j < 4 - records.length % 4; j++) {
@@ -255,8 +296,16 @@ class _RecordPageDetail extends State<ChangeForm> {
       for(int i = 0; i < recordCount; i++) {
         Record _record = new Record();
         print('value[$i] path: ' + value[i].toString());
-        //TODO: 画像ならそのままパスを入れて動画ならサムネイルを生成して入れる
-        _record.setImagePath(value[i].toString());
+        FileType fileType = fileUtility.getFileType(value[i].toString());
+        if(fileType == FileType.Image) {
+          _record.setImagePath(value[i].toString());
+        } else if(fileType == FileType.Movie) {
+          //TODO: 動画サムネイルの生成
+          GenThumbnailImage _image = GenThumbnailImage(videoPath: value[i].toString());
+          _record.setImagePath(value[i].toString());
+        } else { //ファイルが画像でも動画でもない
+          // 例外
+        }
         print('_record path: ' + _record.getImagePath());
         _records.add(_record);
       }
@@ -314,6 +363,34 @@ class RecordDetail extends StatelessWidget {
           ]
         )
       )
+    );
+  }
+
+
+}
+
+class GenThumbnailImage extends StatefulWidget {
+  final videoPath;
+  const GenThumbnailImage({Key key, this.videoPath});
+
+  @override
+  _GenThumbnailImageState createState() => _GenThumbnailImageState();
+}
+
+class _GenThumbnailImageState extends State<GenThumbnailImage> {
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<ThumbnailResult> (
+      future: getThumbnail(widget.videoPath),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if(snapshot.hasData) {
+          final _image = snapshot.data.image;
+          return Image(image: _image);
+        } else {
+          return Image.file(File(''));
+        }
+      }
     );
   }
 }
