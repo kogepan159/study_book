@@ -19,7 +19,6 @@ class FileUtility {
 
   /* 指定したパスのファイルの種類(FileType(Image,Movie,Other))を返す */
   FileType getFileType(String filePath) {
-    filePath = 'testDir/test.png';
     int textLength = filePath.length;
     int extPoint = 0;
 
@@ -39,12 +38,15 @@ class FileUtility {
       case 'jpg':
       case 'jpeg':
       case 'png':
-      return FileType.Image;
+        return FileType.Image;
+        break;
       case 'mp4':
       case 'mov':
         return FileType.Movie;
+        break;
       default:
         return FileType.Other;
+        break;
     }
   }
 

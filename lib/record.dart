@@ -14,14 +14,15 @@ import 'MoviePlayerWidget.dart';
 
 Future getThumbnail(String videoPath) async {
   Uint8List bytes;
-  final Completer<ThumbnailResult> completer = Completer();
+  //final Completer<ThumbnailResult> completer = Completer();
   bytes = await VideoThumbnail.thumbnailData(video: videoPath);
+  print('Bytes = ' + bytes.toString());
   return bytes;
-  final _image = Image.memory(bytes);
+  /*final _image = Image.memory(bytes);
   print(_image);
   completer.complete(ThumbnailResult(image: _image));
 
-  return completer.future;
+  return completer.future;*/
 }
 
 class Record {
@@ -191,7 +192,7 @@ class _RecordPageDetail extends State<ChangeForm> {
   Future getVideoFromCamera() async {
     PickedFile pickedFile = await picker.getVideo(source: ImageSource.camera);
     var imageFile = File(pickedFile.path);
-    var _cameraVideoPlayerController = VideoPlayerController.file(imageFile);
+    //var _cameraVideoPlayerController = VideoPlayerController.file(imageFile);
 
     _image = File(imageFile.path);
 
@@ -263,11 +264,18 @@ class _RecordPageDetail extends State<ChangeForm> {
           )
         );
       } else if(fileType == FileType.Movie) {
+        print('FileType Movie Record Running...');
         Uint8List bytes;
+        bool isRun = false;
         // Image.memoryに格納するImageのバイト列を取得する
         getThumbnail(imagePath).then((value) => () {
+          print('Value(getThumbnail) = ' + value.toString());
           bytes = value;
+          print('Bytes(getThumbnail) = ' + bytes.toString());
+          isRun = true;
         });
+        print('isRun = ' + isRun.toString());
+        print('... ... ...');
         oneLineRecords.add(
           Expanded(
             child: Image.memory(bytes),
@@ -295,18 +303,20 @@ class _RecordPageDetail extends State<ChangeForm> {
 
       for(int i = 0; i < recordCount; i++) {
         Record _record = new Record();
-        print('value[$i] path: ' + value[i].toString());
+        //print('value[$i] path: ' + value[i].toString());
+        print('*** Image Property ***');
+        print('No.$i Record');
         FileType fileType = fileUtility.getFileType(value[i].toString());
-        if(fileType == FileType.Image) {
+        print('ImagePath: ' + value[i].toString());
+        print('FileType: ' + fileType.toString());
+        print('**********************');
+        if(fileType == FileType.Image || fileType == FileType.Movie) {
           _record.setImagePath(value[i].toString());
-        } else if(fileType == FileType.Movie) {
-          //TODO: 動画サムネイルの生成
-          GenThumbnailImage _image = GenThumbnailImage(videoPath: value[i].toString());
-          _record.setImagePath(value[i].toString());
-        } else { //ファイルが画像でも動画でもない
+        } else { // ファイルが画像でも動画でもない
           // 例外
+          _record.setImagePath(''); // 画像は配置されず空白になる
         }
-        print('_record path: ' + _record.getImagePath());
+        //print('_record path: ' + _record.getImagePath());
         _records.add(_record);
       }
       setState(() {
