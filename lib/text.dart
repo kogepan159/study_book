@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flappy_search_bar/flappy_search_bar.dart';
 import 'package:flutter/material.dart';
@@ -100,10 +102,9 @@ class _TextPageDetail extends State<ChangeForm> {
 
   @override
   Widget build(BuildContext context) {
-    _booksCount = 34;
-
     if(isFirstReload) {
-      books = loadBooks(_booksCount);
+      books = loadBooks();
+      _booksCount = books.length;
       isFirstReload = false;
     }
 
@@ -191,7 +192,8 @@ class _TextPageDetail extends State<ChangeForm> {
     debugPrint('run selectBook(book $bookNumber)');
   }
 
-  List<Book> loadBooks(int booksCount) {
+  List<Book> loadBooks() {
+    int booksCount = 32;
     List<Book> _books = [];
     Book book;
     debugPrint('loadBooks');
@@ -260,6 +262,24 @@ class _TextPageDetail extends State<ChangeForm> {
     for(int i = 0; i < bookMakeCount; i++) {
       bookStacks.add(getBookStack(startBookNumber + i)); // i番目の本のStackを生成
     }
+    print('bookあまり' + (3 - _booksCount %3).toString());
+    print('lineNumber: $lineNumber lastLineNumber: ${_booksCount ~/ 3}');
+    if((lineNumber-1) == _booksCount ~/ 3) {
+      print('run');
+      for(int b = 0; b < (3 - _booksCount % 3); b++) {
+        bookStacks.add(
+            Stack(
+                alignment: AlignmentDirectional.bottomEnd,
+                children: [
+                  Image.asset(
+                      '//text/text_sample5.png',
+                      width: MediaQuery.of(context).size.width / 4.3,
+                      height: MediaQuery.of(context).size.height / 5.5)
+                ]
+            )
+        );
+      }
+    }
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: bookStacks,
@@ -281,7 +301,10 @@ class _TextPageDetail extends State<ChangeForm> {
   GestureDetector getDetectorBook(int bookNumber) {
     return GestureDetector(
       onTap: () => selectBook(bookNumber),
-      child: Image.asset(books[bookNumber-1].getThumbnailPath(), height: MediaQuery.of(context).size.height / 5.5),
+      child: Image.asset(
+          books[bookNumber-1].getThumbnailPath(),
+          width: MediaQuery.of(context).size.width / 4.3,
+          height: MediaQuery.of(context).size.height / 5.5),
     );
   }
 
@@ -293,10 +316,6 @@ class _TextPageDetail extends State<ChangeForm> {
         onPressed: () => updateFavoriteState(bookNumber-1),
         color: books[bookNumber-1].isFavorite() ? Colors.yellow : Colors.black,
     );
-  }
-
-  Color updateColor() {
-    return Colors.yellow;
   }
 
   void updateFavoriteState(int bookNumber) {
