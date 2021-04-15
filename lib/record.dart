@@ -378,7 +378,7 @@ class RecordDetail extends StatelessWidget {
 
 
 }
-
+/*
 class GenThumbnailImage extends StatefulWidget {
   final videoPath;
   const GenThumbnailImage({Key key, this.videoPath});
@@ -403,4 +403,4 @@ class _GenThumbnailImageState extends State<GenThumbnailImage> {
       }
     );
   }
-}
+}*/

@@ -287,10 +287,16 @@ class _TextPageDetail extends State<ChangeForm> {
 
   /* 本番号を持つタップ可能なお気に入りボタンを生成する */
   IconButton getFavoriteButton(int bookNumber) {
+    Color buttonColor;
     return IconButton(
         icon: ImageIcon(AssetImage(books[bookNumber-1].getButtonIcon())),
-        onPressed: () => updateFavoriteState(bookNumber-1)
+        onPressed: () => updateFavoriteState(bookNumber-1),
+        color: books[bookNumber-1].isFavorite() ? Colors.yellow : Colors.black,
     );
+  }
+
+  Color updateColor() {
+    return Colors.yellow;
   }
 
   void updateFavoriteState(int bookNumber) {
