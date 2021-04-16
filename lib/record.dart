@@ -266,22 +266,19 @@ class _RecordPageDetail extends State<ChangeForm> {
       } else if(fileType == FileType.Movie) {
         print('FileType Movie Record Running...');
         Uint8List bytes;
-        bool isRun = false;
         // Image.memoryに格納するImageのバイト列を取得する
         getThumbnail(imagePath).then((value) => () {
           print('Value(getThumbnail) = ' + value.toString());
           bytes = value;
           print('Bytes(getThumbnail) = ' + bytes.toString());
-          isRun = true;
+          oneLineRecords.add(
+              Expanded(
+                child: Image.memory(bytes),
+              )
+          );
+          setState(() {});
         });
-        print('isRun = ' + isRun.toString());
-        print('... ... ...');
-        oneLineRecords.add(
-          Expanded(
-            child: Image.memory(bytes),
-          )
-        );
-        setState(() {});
+
       }
     }
     if(lineCount == lineNumber + 1) {
