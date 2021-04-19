@@ -12,11 +12,12 @@ import 'package:video_thumbnail/video_thumbnail.dart';
 
 import 'MoviePlayerWidget.dart';
 
-Future getThumbnail(String videoPath) async {
+Future<Uint8List> getThumbnail(String videoPath) async {
   Uint8List bytes;
   //final Completer<ThumbnailResult> completer = Completer();
   bytes = await VideoThumbnail.thumbnailData(video: videoPath);
   print('Bytes = ' + bytes.toString());
+
   return bytes;
   /*final _image = Image.memory(bytes);
   print(_image);
@@ -265,23 +266,24 @@ class _RecordPageDetail extends State<ChangeForm> {
         );
       } else if(fileType == FileType.Movie) {
         print('FileType Movie Record Running...');
-        Uint8List bytes;
-        bool isRun = false;
+        print('imagePath(getThumbnail) = ' + imagePath);
         // Image.memoryに格納するImageのバイト列を取得する
-        getThumbnail(imagePath).then((value) => () {
-          print('Value(getThumbnail) = ' + value.toString());
-          bytes = value;
-          print('Bytes(getThumbnail) = ' + bytes.toString());
-          isRun = true;
-        });
-        print('isRun = ' + isRun.toString());
-        print('... ... ...');
         oneLineRecords.add(
-          Expanded(
-            child: Image.memory(bytes),
-          )
+            Expanded(
+              child: FutureBuilder(
+                  future: getThumbnail(imagePath),
+                  // ignore: missing_return
+                  builder: (BuildContext context, AsyncSnapshot<Uint8List> bytes) {
+                  if (bytes.hasData) {
+                    return Image.memory(bytes.data);
+                    return Text("読み込み中");
+                  }
+                  // 非同期処理で取得したデータを使用して、　Widgetを生成する
+                  return Text("読み込み中");
+               }
+              )
+            )
         );
-        setState(() {});
       }
     }
     if(lineCount == lineNumber + 1) {
